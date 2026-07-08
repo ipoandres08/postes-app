@@ -1,0 +1,49 @@
+# --- OS y Carpetas del Sistema ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- IDEs y Editores ---
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# --- Backend (.NET) ---
+# Carpetas de compilación y empaquetado
+**/bin/
+**/obj/
+**/publish/
+**/test-results/
+
+# Archivos de configuración local (¡IMPORTANTE: No subir secretos!)
+appsettings.Development.json
+appsettings.Local.json
+*.env
+*.secrets.json
+
+# --- Mobile (Flutter/Dart) ---
+# Carpetas de compilación y caché
+.dart_tool/
+.packages
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# Binarios generados
+*.apk
+*.aab
+*.ipa
+*.app
+
+# Archivos de configuración de IDEs específicos de Dart
+.dart_tool/package_config.json
+
+# --- Infraestructura ---
+# Si usas archivos .env en la carpeta infra, no subirlos
+/infra/.env
+/infra/*.log
