@@ -1,5 +1,7 @@
 using NetTopologySuite.Geometries;
 
+namespace Domain.Entities;
+
 public abstract class Activo
 {
     public int Id { get; set; }

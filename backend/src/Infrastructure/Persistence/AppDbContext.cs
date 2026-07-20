@@ -1,31 +1,33 @@
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence
+namespace Infrastructure.Persistence;
+
+public class AppDbContext : DbContext
 {
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Activo> Activos { get; set; }
+    public DbSet<Poste> Postes { get; set; }
+    public DbSet<Medidor> Medidores { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public DbSet<Activo> Activos { get; set; }
-        public DbSet<Usuario> Usuarios { get; set; }
+        base.OnModelCreating(modelBuilder);
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        modelBuilder.Entity<Activo>(entity =>
         {
-            base.OnModelCreating(modelBuilder);
+            // Estrategia TPH (Table-Per-Hierarchy) para herencia
+            entity.UseTphMappingStrategy();
 
-            // Configuración TPH (Table Per Hierarchy)
-            _ = modelBuilder.Entity<Activo>()
-                .HasDiscriminator<string>("TipoActivo")
-                .HasValue<Poste>("Poste")
-                .HasValue<Medidor>("Medidor");
+            // Configuración PostGIS para coordenadas geográficas reales
+            entity.Property(e => e.Ubicacion)
+                  .HasColumnType("geography (point)")
+                  .HasDefaultValueSql("ST_SetSRID(ST_MakePoint(0, 0), 4326)");
 
-            // Índice espacial GIST para la columna Ubicacion
-            _ = modelBuilder.Entity<Activo>()
-                .HasIndex(a => a.Ubicacion)
-                .HasMethod("GIST");
-
-            // Concurrencia optimista
-            _ = modelBuilder.Entity<Activo>()
-                .Property(a => a.Version)
-                .IsRowVersion();
-        }
+            // Concurrencia optimista estándar (online simultáneo)
+            entity.Property(e => e.Version).IsRowVersion();
+        });
     }
 }
